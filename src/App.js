@@ -171,31 +171,25 @@ const App = () => {
     localStorage.removeItem("userId"); // Clear the user ID from localStorage
   };
 
-  const wallpaperPath = () => {
-    switch (sharedValue) {
-      case 1:
-        return "bg-[url('1.png')] bg-no-repeat bg-center bg-cover";
-      case 2:
-        return "bg-[url('2.png')] bg-no-repeat bg-center bg-cover";
-      case 3:
-        return "bg-[url('3.png')] bg-no-repeat bg-center bg-cover";
-      case 4:
-        return "bg-[url('4.png')] bg-no-repeat bg-center bg-cover";
-      case 5:
-        return "bg-[url('5.png')] bg-no-repeat bg-center bg-cover";
-      case 6:
-        return "bg-[url('6.png')] bg-no-repeat bg-center bg-cover";
-    }
+  const wallPath = {
+    one: "bg-[url('1.png')] bg-no-repeat bg-center bg-cover",
+    two: "bg-[url('2.png')] bg-no-repeat bg-center bg-cover",
+    three: "bg-[url('3.png')] bg-no-repeat bg-center bg-cover",
+    four: "bg-[url('4.png')] bg-no-repeat bg-center bg-cover",
+    five: "bg-[url('5.png')] bg-no-repeat bg-center bg-cover",
+    six: "bg-[url('6.png')] bg-no-repeat bg-center bg-cover",
+    seven: "bg-slate-900 bg-no-repeat bg-center bg-cover",
+    // Add more mappings as needed
   };
 
   return (
-    <div className={`flex flex-col  `}>
+    <div className={`flex flex-col min-h-screen  ${wallPath[sharedValue]}`}>
       {userId && <div className="flex-grow">{renderComponent()}</div>}
 
       <div>
         {!userId && <Login onUserIdSubmit={handleUserId} />}
 
-        <div className="flex-col fixed top-0 right-0 rounded-bl-xl bg-slate-700 flex rounded-tr-lg w-fit px-5 py-2 text-white font-bold uppercase ">
+        <div className="flex-col fixed top-0 right-0 rounded-bl-xl bg-slate-700 flex rounded-tr-lg  px-5 py-2 text-white font-bold uppercase ">
           <button className="uppercase" onClick={() => setActiveComponent("E")}>
             {userId}
           </button>

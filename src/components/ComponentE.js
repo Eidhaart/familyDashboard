@@ -31,8 +31,6 @@ function ComponentE({
     }
   };
 
-  const value = sharedValue;
-
   const currentUser = userId;
 
   useEffect(() => {
@@ -96,25 +94,6 @@ function ComponentE({
     (task) => !task.completed
   ).length;
 
-  const wallpaperPath = () => {
-    switch (sharedValue) {
-      case 1:
-        return "one";
-      case 2:
-        return "two";
-      case 3:
-        return "three";
-      case 4:
-        return "four";
-      case 5:
-        return "five";
-      case 6:
-        return "six";
-      default:
-        return "seven";
-    }
-  };
-
   const wallPath = {
     one: "bg-[url('1.png')] bg-no-repeat bg-center bg-cover",
     two: "bg-[url('2.png')] bg-no-repeat bg-center bg-cover",
@@ -127,17 +106,15 @@ function ComponentE({
   };
 
   return (
-    <div className="space-y-2 backdrop-blur-lg w-full h-full ">
+    <div className="space-y-2 backdrop-blur-xl min-h-screen ">
       <div
-        className={` ${
-          wallPath[wallpaperPath()]
-        } flex flex-col items-start justify-center p-4  rounded-lg shadow-md`}
+        className={` ${wallPath[sharedValue]} flex flex-col items-start justify-center p-4  rounded-lg shadow-md`}
       >
         <DigitalClock className="text-2xl text-stone-900 font-bold mb-4 w-full " />
 
         <div className="text-3xl text-slate-300 bg-slate-900 bg-opacity-40 font-semibold  p-2 my-2 rounded-lg">
           {" "}
-          Points: {points} {sharedValue}
+          Points: {points}
         </div>
         <div className="text-3xl text-slate-300 bg-slate-900 bg-opacity-40 font-semibold  p-1 rounded-lg">
           Remaining Tasks: {notCompletedCount}

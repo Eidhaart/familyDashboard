@@ -6,7 +6,7 @@ function ComponentB({ setAccent, setWallpaper, logout, setSharedValue }) {
   };
 
   return (
-    <div className="flex flex-col p-10 bg-gray-800 text-white rounded-lg shadow-lg max-w-md mx-auto">
+    <div className="flex flex-col min-h-screen p-10 bg-gray-800 text-white rounded-lg shadow-lg max-w-md mx-auto">
       <h1 className="text-2xl font-semibold uppercase mb-5">Settings</h1>
 
       <div className="mb-5">
@@ -39,27 +39,27 @@ function ComponentB({ setAccent, setWallpaper, logout, setSharedValue }) {
         <h2 className="font-semibold text-lg mb-3">Wallpaper</h2>
         <div className="flex space-x-3">
           <button
-            onClick={() => updateValue(1)}
+            onClick={() => updateValue("one")}
             className="rounded-xl bg-[url('1.png')] bg-no-repeat bg-center bg-cover w-16 h-16 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-all duration-200"
           ></button>
           <button
-            onClick={() => updateValue(2)}
+            onClick={() => updateValue("two")}
             className="rounded-xl bg-[url('2.png')] bg-no-repeat bg-center bg-cover w-16 h-16 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-all duration-200"
           ></button>
           <button
-            onClick={() => updateValue(3)}
+            onClick={() => updateValue("three")}
             className="rounded-xl bg-[url('3.png')] bg-no-repeat bg-center bg-cover w-16 h-16 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-all duration-200"
           ></button>
           <button
-            onClick={() => updateValue(4)}
+            onClick={() => updateValue("four")}
             className="rounded-xl bg-[url('4.png')] bg-no-repeat bg-center bg-cover w-16 h-16 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-all duration-200"
           ></button>
           <button
-            onClick={() => updateValue(5)}
+            onClick={() => updateValue("five")}
             className="rounded-xl bg-[url('5.png')] bg-no-repeat bg-center bg-cover w-16 h-16 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-all duration-200"
           ></button>
           <button
-            onClick={() => updateValue(6)}
+            onClick={() => updateValue("six")}
             className="rounded-xl bg-[url('6.png')] bg-no-repeat bg-center bg-cover w-16 h-16 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-all duration-200"
           ></button>
         </div>

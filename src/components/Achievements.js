@@ -42,7 +42,7 @@ function Achievements({ pointsAdam, pointsLeon, accentColor }) {
   };
 
   return (
-    <div className=" w-full h-full p-20  flex justify-center items-end space-x-4  text-white">
+    <div className=" w-full h-full p-20  flex justify-center items-end space-x-4  text-white backdrop-blur-md ">
       <div className="text-center flex flex-col items-center">
         {renderParagraphAboveBar("adam")}
         <div

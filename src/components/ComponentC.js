@@ -4,7 +4,7 @@ import { faPoo } from "@fortawesome/free-solid-svg-icons";
 
 function ComponentC() {
   return (
-    <div className="flex flex-col justify-center items-center font-bold p-16 text-center text-white">
+    <div className=" min-h-screen backdrop-blur-lg flex flex-col justify-center items-center font-bold p-16 text-center text-white">
       <h1 className="uppercase text-5xl">Błąd 404</h1>
       <br></br>
       <p className="font-semibold uppercase">aka</p>
