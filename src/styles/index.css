@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.cursor-pointer {
+  transition: background-color 0.3s ease;
+}
+
+.cursor-pointer:hover {
+  transform: scale(1.1);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Add this in your global CSS file */
+.vignette::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent,
+    rgba(0, 0, 0, 0.5)
+  );
+  pointer-events: none;
+}

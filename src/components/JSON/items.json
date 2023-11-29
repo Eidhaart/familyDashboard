@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Game night choice",
+    "description": "You can chose card/board game",
+    "price": 15
+  },
+  {
+    "id": 2,
+    "name": "More time on PC",
+    "description": "Additional 2 hours on PC",
+    "price": 15
+  },
+  {
+    "id": 3,
+    "name": "More money on friday",
+    "description": "Additional 30kr on friday",
+    "price": 35
+  },
+  {
+    "id": 4,
+    "name": "Movie ticket",
+    "description": "Get a movie ticket for a movie of your choice",
+    "price": 80
+  },
+  {
+    "id": 5,
+    "name": "A new game",
+    "description": "You can chose a game worth up to around 200kr ",
+    "price": 100
+  },
+  {
+    "id": 6,
+    "name": "Pizza",
+    "description": "Store bought or Homemade",
+    "price": 25
+  },
+  {
+    "id": 7,
+    "name": "Movie night",
+    "description": "We watch a movie of your choice",
+    "price": 20
+  },
+  {
+    "id": 8,
+    "name": "THE END OF DETOX",
+    "description": "",
+    "price": 800
+  }
+]
