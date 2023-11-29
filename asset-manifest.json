@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/static/css/main.6db013c5.css",
-    "main.js": "/static/js/main.988489af.js",
-    "static/media/5.png": "/static/media/5.75ed0330ac1f8b19630e.png",
-    "static/media/3.png": "/static/media/3.ed78af893e3e38103900.png",
-    "static/media/2.png": "/static/media/2.e45dc4d1fa8f6fc0c1f4.png",
-    "static/media/1.png": "/static/media/1.61155124595a64b9add1.png",
-    "static/media/4.png": "/static/media/4.8e8ed311ada0561445a9.png",
-    "static/media/6.png": "/static/media/6.37d51e3bc966b663bef0.png",
-    "index.html": "/index.html",
-    "main.6db013c5.css.map": "/static/css/main.6db013c5.css.map",
-    "main.988489af.js.map": "/static/js/main.988489af.js.map"
+    "main.css": "/familyDashboard/static/css/main.3a2ca3af.css",
+    "main.js": "/familyDashboard/static/js/main.36b6ede2.js",
+    "static/media/5.png": "/familyDashboard/static/media/5.75ed0330ac1f8b19630e.png",
+    "static/media/3.png": "/familyDashboard/static/media/3.ed78af893e3e38103900.png",
+    "static/media/2.png": "/familyDashboard/static/media/2.e45dc4d1fa8f6fc0c1f4.png",
+    "static/media/1.png": "/familyDashboard/static/media/1.61155124595a64b9add1.png",
+    "static/media/4.png": "/familyDashboard/static/media/4.8e8ed311ada0561445a9.png",
+    "static/media/6.png": "/familyDashboard/static/media/6.37d51e3bc966b663bef0.png",
+    "index.html": "/familyDashboard/index.html",
+    "main.3a2ca3af.css.map": "/familyDashboard/static/css/main.3a2ca3af.css.map",
+    "main.36b6ede2.js.map": "/familyDashboard/static/js/main.36b6ede2.js.map"
   },
   "entrypoints": [
-    "static/css/main.6db013c5.css",
-    "static/js/main.988489af.js"
+    "static/css/main.3a2ca3af.css",
+    "static/js/main.36b6ede2.js"
   ]
 }
