@@ -118,5 +118,85 @@
   {
     "swedish": "Kaffe",
     "english": "Coffee"
+  },
+  {
+    "swedish": "Hälsa",
+    "english": "Health"
+  },
+  {
+    "swedish": "Lärare",
+    "english": "Teacher"
+  },
+  {
+    "swedish": "Skola",
+    "english": "School"
+  },
+  {
+    "swedish": "Arbete",
+    "english": "Work"
+  },
+  {
+    "swedish": "Familj",
+    "english": "Family"
+  },
+  {
+    "swedish": "Barn",
+    "english": "Child"
+  },
+  {
+    "swedish": "Kvinna",
+    "english": "Woman"
+  },
+  {
+    "swedish": "Man",
+    "english": "Man"
+  },
+  {
+    "swedish": "Flicka",
+    "english": "Girl"
+  },
+  {
+    "swedish": "Pojke",
+    "english": "Boy"
+  },
+  {
+    "swedish": "Mat",
+    "english": "Food"
+  },
+  {
+    "swedish": "Vatten",
+    "english": "Water"
+  },
+  {
+    "swedish": "Hus",
+    "english": "House"
+  },
+  {
+    "swedish": "Bil",
+    "english": "Car"
+  },
+  {
+    "swedish": "Väg",
+    "english": "Road"
+  },
+  {
+    "swedish": "Stad",
+    "english": "City"
+  },
+  {
+    "swedish": "Land",
+    "english": "Country"
+  },
+  {
+    "swedish": "Karta",
+    "english": "Map"
+  },
+  {
+    "swedish": "Bok",
+    "english": "Book"
+  },
+  {
+    "swedish": "Telefon",
+    "english": "Phone"
   }
 ]
