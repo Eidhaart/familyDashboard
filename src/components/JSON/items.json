@@ -30,6 +30,12 @@
     "price": 100
   },
   {
+    "id": 8,
+    "name": "Art Supplies ",
+    "description": "You can choose art supplies to buy up to 350 kr",
+    "price": 150
+  },
+  {
     "id": 6,
     "name": "Pizza",
     "description": "Store bought or Homemade",
@@ -42,7 +48,7 @@
     "price": 20
   },
   {
-    "id": 8,
+    "id": 9,
     "name": "THE END OF DETOX",
     "description": "",
     "price": 800
