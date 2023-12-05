@@ -111,7 +111,7 @@ const App = () => {
           </div>
         );
       case "C":
-        return <CompC accentColor={accentColor} />;
+        return <CompC accentColor={accentColor} userId={userId} />;
       case "D":
         return <CompD accentColor={accentColor} userId={userId} />;
       case "E":
@@ -202,9 +202,9 @@ const App = () => {
         <button
           className={`font-light py-2 px-4 rounded ease-in-out transition-all duration-200  ${isActive(
             "A"
-          )} hover:${
+          )}  hover:${
             colorClasses[accentColor]
-          } hover:text-white hover:rounded-t-xl`}
+          } hover:text-white hover:rounded-t-xl `}
           onClick={() => setActiveComponent("A")}
         >
           {" "}
