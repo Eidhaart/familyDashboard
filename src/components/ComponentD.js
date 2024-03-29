@@ -31,6 +31,7 @@ function ComponentD({ userId }) {
         lvl: level,
         user: assignedUser,
         completed: false,
+        createdAt: new Date(),
       });
       setTitle("");
       setLevel("");
@@ -63,6 +64,7 @@ function ComponentD({ userId }) {
         lvl: lvl,
         user: user,
         completed: false,
+        createdAt: new Date(),
       });
     } catch (error) {
       console.error("Error adding document: ", error);

@@ -6,6 +6,7 @@ import {
   updateDoc,
   getDoc,
   setDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "./firebase"; // Adjust the path as necessary
 import "animate.css";
@@ -19,38 +20,35 @@ import InfoModal from "./InfoModal";
 
 const ComponentA = ({ userId, accentColor }) => {
   const [todos, setTodos] = useState([]);
-  const [showInfo, setShowInfo] = useState(false);
   const currentUser = userId;
-  const COMPLETION_BONUS = 4; // Define the bonus points for completing all tasks
   const [selectedTaskId, setSelectedTaskId] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      // Additional logic for awarding/removing bonus points
+    const cleanUpOldTasks = async () => {
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0); // Set to start of today
 
       try {
         const querySnapshot = await getDocs(collection(db, "todos"));
-        const allTasks = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
+        querySnapshot.forEach((doc) => {
+          const task = doc.data();
+          const taskDate = new Date(task.createdAt.seconds * 1000); // Convert Firestore timestamp to Date
 
-        const userTasks = allTasks.filter(
-          (task) => task.user === currentUser || task.user === "anyone"
-        );
+          if (taskDate < startOfToday) {
+            // If the task is older than the start of today, delete it
+            deleteDoc(doc.ref).catch(console.error);
+          }
+        });
 
-        if (userId === "admin") {
-          setTodos(allTasks);
-        } else {
-          setTodos(userTasks);
-        }
-      } catch {
-        console.log("Error fetching data: ");
+        // Optionally, after cleanup, fetch the remaining tasks to update the state
+        // This can be done here directly or by calling a separate fetch function
+      } catch (error) {
+        console.error("Error cleaning up old tasks: ", error);
       }
     };
 
-    fetchData();
-  }, [currentUser]);
+    cleanUpOldTasks();
+  }, []); // Empty dependency array means this runs once on component mount
 
   const completedTasks = todos.filter((todo) => todo.completed);
   const notCompletedTasks = todos.filter((todo) => !todo.completed);

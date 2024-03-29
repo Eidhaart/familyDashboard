@@ -102,9 +102,7 @@ function ComponentC({ userId }) {
     ));
 
   return (
-    <div className=" min-h-screen backdrop-blur-lg flex flex-col justify-center items-center font-bold p-16 text-center text-white">
-      {renderFoods(foods)}
-    </div>
+    <div className=" min-h-screen backdrop-blur-lg flex flex-col justify-center items-center font-bold p-16 text-center text-white"></div>
   );
 }
 
