@@ -7,7 +7,11 @@ import {
   getDoc,
   setDoc,
   deleteDoc,
+  where,
+  query,
+  Timestamp, // Import Timestamp here
 } from "firebase/firestore";
+
 import { db } from "./firebase"; // Adjust the path as necessary
 import "animate.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,44 +29,65 @@ const ComponentA = ({ userId, accentColor }) => {
 
   useEffect(() => {
     const cleanUpOldTasks = async () => {
-      const startOfToday = new Date();
-      startOfToday.setHours(0, 0, 0, 0); // Set to start of today
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
       try {
-        const querySnapshot = await getDocs(collection(db, "todos"));
-        querySnapshot.forEach((doc) => {
-          const task = doc.data();
-          // Check if `createdAt` exists and has a `seconds` property
-          if (task.createdAt && typeof task.createdAt.seconds === "number") {
-            const taskDate = new Date(task.createdAt.seconds * 1000); // Convert Firestore timestamp to Date
+        // Create a base query for todos collection
+        const tasksRef = collection(db, "todos");
 
-            // The "logic" - what happens next after getting the `taskDate`
-            if (taskDate < startOfToday) {
-              // If the task is older than the start of today, delete it
-              deleteDoc(doc.ref).catch(console.error);
+        // Adjust the query based on user role
+        const queryConstraint =
+          currentUser === "admin"
+            ? tasksRef
+            : query(tasksRef, where("user", "in", [currentUser, "anyone"]));
+
+        const querySnapshot = await getDocs(queryConstraint);
+
+        const tasksToDelete = [];
+        const filteredTasks = [];
+
+        querySnapshot.forEach((doc) => {
+          const task = { id: doc.id, ...doc.data() };
+          // Ensure createdAt exists and is a timestamp
+          if (task.createdAt && typeof task.createdAt.seconds === "number") {
+            const taskDate = new Date(task.createdAt.seconds * 1000);
+            taskDate.setHours(0, 0, 0, 0);
+            const differenceInDays = Math.round(
+              (today - taskDate) / (1000 * 60 * 60 * 24)
+            );
+
+            // If the task was created exactly 1 day ago, prepare it for deletion
+            if (differenceInDays === 1) {
+              tasksToDelete.push(doc.ref);
+            } else {
+              // Otherwise, this task is kept
+              filteredTasks.push(task);
             }
           } else {
-            // Handle the case where `createdAt` is undefined or does not have a `seconds` property
-            console.log(
-              `Task ID ${doc.id} does not have a valid 'createdAt' field.`
-            );
+            // If there's no valid createdAt, just keep the task
+            filteredTasks.push(task);
           }
         });
 
-        // Optionally, after cleanup, fetch the remaining tasks to update the state
-        // This can be done here directly or by calling a separate fetch function
+        // Execute deletions
+        await Promise.all(tasksToDelete.map((taskRef) => deleteDoc(taskRef)));
+
+        // Update component state
+        setTodos(filteredTasks);
       } catch (error) {
         console.error("Error cleaning up old tasks: ", error);
       }
-
-      const updatedQuerySnapshot = await getDocs(collection(db, "todos"));
-      setTodos(
-        updatedQuerySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-      );
     };
 
     cleanUpOldTasks();
-  }, []); // Empty dependency array means this runs once on component mount
+  }, [currentUser]); // Depend on currentUser to refetch tasks if it changes
+
+  // Dependency array includes currentUser to react to changes
+  // Include currentUser in the dependency array if it might change
+  // Dependency array is empty, meaning this runs once on component mount
+
+  // Empty dependency array means this runs once on component mount
 
   const completedTasks = todos.filter((todo) => todo.completed);
   const notCompletedTasks = todos.filter((todo) => !todo.completed);
@@ -189,13 +214,17 @@ const ComponentA = ({ userId, accentColor }) => {
   return (
     <div className="p-8 bg-gray-800 min-h-screen text-white">
       <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Not Completed Tasks</h2>
+        <h2 className="text-2xl font-bold mb-4 mt-10 justify-center text-center">
+          Not Completed Tasks
+        </h2>
         <div className="flex flex-col gap-4">
           {renderTasks(notCompletedTasks)}
         </div>
       </section>
       <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Completed Tasks {userId}</h2>
+        <h2 className="text-2xl font-bold mb-4 justify-center text-center">
+          Completed Tasks
+        </h2>
         <div className="flex flex-col gap-4">{renderTasks(completedTasks)}</div>
       </section>
     </div>
