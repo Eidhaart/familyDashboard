@@ -32,11 +32,20 @@ const ComponentA = ({ userId, accentColor }) => {
         const querySnapshot = await getDocs(collection(db, "todos"));
         querySnapshot.forEach((doc) => {
           const task = doc.data();
-          const taskDate = new Date(task.createdAt.seconds * 1000); // Convert Firestore timestamp to Date
+          // Check if `createdAt` exists and has a `seconds` property
+          if (task.createdAt && typeof task.createdAt.seconds === "number") {
+            const taskDate = new Date(task.createdAt.seconds * 1000); // Convert Firestore timestamp to Date
 
-          if (taskDate < startOfToday) {
-            // If the task is older than the start of today, delete it
-            deleteDoc(doc.ref).catch(console.error);
+            // The "logic" - what happens next after getting the `taskDate`
+            if (taskDate < startOfToday) {
+              // If the task is older than the start of today, delete it
+              deleteDoc(doc.ref).catch(console.error);
+            }
+          } else {
+            // Handle the case where `createdAt` is undefined or does not have a `seconds` property
+            console.log(
+              `Task ID ${doc.id} does not have a valid 'createdAt' field.`
+            );
           }
         });
 
@@ -45,6 +54,11 @@ const ComponentA = ({ userId, accentColor }) => {
       } catch (error) {
         console.error("Error cleaning up old tasks: ", error);
       }
+
+      const updatedQuerySnapshot = await getDocs(collection(db, "todos"));
+      setTodos(
+        updatedQuerySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+      );
     };
 
     cleanUpOldTasks();
@@ -70,7 +84,9 @@ const ComponentA = ({ userId, accentColor }) => {
     tasks.map((todo) => (
       <div
         key={todo.id}
-        className={`rounded-xl shadow-md p-4 ${colorRender(todo.user)} mb-4`}
+        className={`rounded-xl shadow-md p-4 ${colorRender(
+          todo.user
+        )} mb-4 border-gray-950 border-2`}
       >
         <div className="flex items-center">
           <div
