@@ -54,6 +54,26 @@ const App = () => {
     setTotalPoints(newPoints);
   };
 
+  // Inside App.js
+
+  const addTask = async (title, lvl, user) => {
+    try {
+      await addDoc(collection(db, "todos"), {
+        title,
+        lvl: lvl,
+        user: user,
+        completed: false,
+        createdAt: new Date(),
+      });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
+
+  // Define other task-related functions similarly...
+
+  // Pass these functions as props to the components that need them
+
   useEffect(() => {
     if (userId) {
       // Listener for real-time updates
@@ -99,7 +119,9 @@ const App = () => {
   const renderComponent = () => {
     switch (activeComponent) {
       case "A":
-        return <CompA accentColor={accentColor} userId={userId} />;
+        return (
+          <CompA userId={userId} accentColor={accentColor} addTask={addTask} />
+        );
       case "B":
         return (
           <div className="flex flex-col justify-center items-center h-screen pt-1  ">

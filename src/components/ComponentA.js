@@ -22,10 +22,18 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import InfoModal from "./InfoModal";
 
-const ComponentA = ({ userId, accentColor }) => {
+const ComponentA = ({ userId, accentColor, addTask }) => {
   const [todos, setTodos] = useState([]);
   const currentUser = userId;
   const [selectedTaskId, setSelectedTaskId] = useState(null);
+
+  // Inside ComponentA
+
+  const handleSomeEvent = () => {
+    // Example of using addTask
+    addTask("Example Task", 1, userId);
+    // Similarly for addDefaultTasks, addFreeTasks, etc.
+  };
 
   useEffect(() => {
     const cleanUpOldTasks = async () => {
@@ -35,8 +43,6 @@ const ComponentA = ({ userId, accentColor }) => {
       try {
         // Create a base query for todos collection
         const tasksRef = collection(db, "todos");
-
-        // Adjust the query based on user role
         const queryConstraint =
           currentUser === "admin"
             ? tasksRef
@@ -49,7 +55,6 @@ const ComponentA = ({ userId, accentColor }) => {
 
         querySnapshot.forEach((doc) => {
           const task = { id: doc.id, ...doc.data() };
-          // Ensure createdAt exists and is a timestamp
           if (task.createdAt && typeof task.createdAt.seconds === "number") {
             const taskDate = new Date(task.createdAt.seconds * 1000);
             taskDate.setHours(0, 0, 0, 0);
@@ -57,24 +62,24 @@ const ComponentA = ({ userId, accentColor }) => {
               (today - taskDate) / (1000 * 60 * 60 * 24)
             );
 
-            // If the task was created exactly 1 day ago, prepare it for deletion
             if (differenceInDays === 1) {
               tasksToDelete.push(doc.ref);
             } else {
-              // Otherwise, this task is kept
               filteredTasks.push(task);
             }
           } else {
-            // If there's no valid createdAt, just keep the task
             filteredTasks.push(task);
           }
         });
 
-        // Execute deletions
         await Promise.all(tasksToDelete.map((taskRef) => deleteDoc(taskRef)));
-
-        // Update component state
         setTodos(filteredTasks);
+
+        // Now that todos have been updated, check if it's empty
+        if (filteredTasks.length === 0) {
+          console.log("Task list is empty. Adding default tasks...");
+          handleSomeEvent(); // This function should add default tasks
+        }
       } catch (error) {
         console.error("Error cleaning up old tasks: ", error);
       }
@@ -82,6 +87,7 @@ const ComponentA = ({ userId, accentColor }) => {
 
     cleanUpOldTasks();
   }, [currentUser]); // Depend on currentUser to refetch tasks if it changes
+  // Depend on currentUser to refetch tasks if it changes
 
   // Dependency array includes currentUser to react to changes
   // Include currentUser in the dependency array if it might change
@@ -91,6 +97,21 @@ const ComponentA = ({ userId, accentColor }) => {
 
   const completedTasks = todos.filter((todo) => todo.completed);
   const notCompletedTasks = todos.filter((todo) => !todo.completed);
+
+  const refillTasks = () => {
+    // Assuming completedTasks is correctly filtered from todos
+    const notCompletedCount = notCompletedTasks.length;
+
+    // You could also add more logic here if needed, for example, checking if todos is empty
+    if (notCompletedCount === 0) {
+      // No completed tasks
+
+      return "(empty).";
+    } else {
+      // There are some completed tasks
+      return `(${notCompletedCount} tasks)`;
+    }
+  };
 
   const colorRender = (userId) => {
     switch (userId) {
@@ -215,7 +236,7 @@ const ComponentA = ({ userId, accentColor }) => {
     <div className="p-8 bg-gray-800 min-h-screen text-white">
       <section className="mb-8">
         <h2 className="text-2xl font-bold mb-4 mt-10 justify-center text-center">
-          Not Completed Tasks
+          Not Completed Tasks {refillTasks()}
         </h2>
         <div className="flex flex-col gap-4">
           {renderTasks(notCompletedTasks)}
