@@ -1,3 +1,4 @@
+// ComponentA.js
 import React, { useEffect, useState } from "react";
 import {
   collection,
@@ -9,10 +10,9 @@ import {
   deleteDoc,
   where,
   query,
-  Timestamp, // Import Timestamp here
 } from "firebase/firestore";
-
-import { db } from "./firebase"; // Adjust the path as necessary
+import { db } from "./firebase";
+import InfoModal from "./InfoModal";
 import "animate.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -20,20 +20,18 @@ import {
   faTimesCircle,
   faQuestion,
 } from "@fortawesome/free-solid-svg-icons";
-import InfoModal from "./InfoModal";
 
-const ComponentA = ({ userId, accentColor, addTask }) => {
+const ComponentA = ({
+  userId,
+  addTask,
+  addDefaultTasks,
+  addFreeTasks,
+  addFridayTasks,
+}) => {
   const [todos, setTodos] = useState([]);
   const currentUser = userId;
   const [selectedTaskId, setSelectedTaskId] = useState(null);
-
-  // Inside ComponentA
-
-  const handleSomeEvent = () => {
-    // Example of using addTask
-    addTask("Example Task", 1, userId);
-    // Similarly for addDefaultTasks, addFreeTasks, etc.
-  };
+  const [countdown, setCountdown] = useState(null);
 
   useEffect(() => {
     const cleanUpOldTasks = async () => {
@@ -41,7 +39,6 @@ const ComponentA = ({ userId, accentColor, addTask }) => {
       today.setHours(0, 0, 0, 0);
 
       try {
-        // Create a base query for todos collection
         const tasksRef = collection(db, "todos");
         const queryConstraint =
           currentUser === "admin"
@@ -75,10 +72,11 @@ const ComponentA = ({ userId, accentColor, addTask }) => {
         await Promise.all(tasksToDelete.map((taskRef) => deleteDoc(taskRef)));
         setTodos(filteredTasks);
 
-        // Now that todos have been updated, check if it's empty
-        if (filteredTasks.length === 0) {
-          console.log("Task list is empty. Adding default tasks...");
-          handleSomeEvent(); // This function should add default tasks
+        if (
+          filteredTasks.length === 0 ||
+          !filteredTasks.some((task) => !task.completed)
+        ) {
+          startCountdownToNextDay();
         }
       } catch (error) {
         console.error("Error cleaning up old tasks: ", error);
@@ -86,43 +84,91 @@ const ComponentA = ({ userId, accentColor, addTask }) => {
     };
 
     cleanUpOldTasks();
-  }, [currentUser]); // Depend on currentUser to refetch tasks if it changes
-  // Depend on currentUser to refetch tasks if it changes
+  }, [currentUser]);
 
-  // Dependency array includes currentUser to react to changes
-  // Include currentUser in the dependency array if it might change
-  // Dependency array is empty, meaning this runs once on component mount
+  const startCountdownToNextDay = () => {
+    const now = new Date();
+    let targetTime = new Date();
 
-  // Empty dependency array means this runs once on component mount
+    targetTime.setDate(now.getDate() + 1);
+    targetTime.setHours(6, 0, 0, 0);
 
-  const completedTasks = todos.filter((todo) => todo.completed);
-  const notCompletedTasks = todos.filter((todo) => !todo.completed);
+    const updateCountdown = () => {
+      const now = new Date();
+      const remainingTime = targetTime - now;
 
-  const refillTasks = () => {
-    // Assuming completedTasks is correctly filtered from todos
-    const notCompletedCount = notCompletedTasks.length;
+      if (remainingTime <= 0) {
+        clearInterval(timer);
+        addTasksForTheDay();
+      } else {
+        const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((remainingTime / (1000 * 60)) % 60);
+        const seconds = Math.floor((remainingTime / 1000) % 60);
+        setCountdown(`${hours}:${minutes}:${seconds}`);
+      }
+    };
 
-    // You could also add more logic here if needed, for example, checking if todos is empty
-    if (notCompletedCount === 0) {
-      // No completed tasks
-
-      return "(empty).";
-    } else {
-      // There are some completed tasks
-      return `(${notCompletedCount} tasks)`;
-    }
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
   };
 
-  const colorRender = (userId) => {
-    switch (userId) {
-      case "adam":
-        return "bg-orange-800 text-white";
-      case "leon":
-        return "bg-purple-800 text-white";
-      case "admin":
-        return "bg-green-800 text-white";
-      default:
-        return "bg-slate-600 text-white";
+  const addTasksForTheDay = () => {
+    const dayOfWeek = new Date().getDay();
+    if (dayOfWeek === 5) {
+      addFridayTasks();
+      addDefaultTasks();
+      addFreeTasks();
+    } else {
+      addDefaultTasks();
+      addFreeTasks();
+    }
+    setCountdown(null);
+  };
+
+  const toggleCompleted = async (taskId, currentStatus) => {
+    const taskRef = doc(db, "todos", taskId);
+    const newUser = currentStatus ? "anyone" : userId;
+
+    try {
+      const taskDoc = await getDoc(taskRef);
+      if (!taskDoc.exists()) {
+        console.log("Task not found");
+        return;
+      }
+      const taskData = taskDoc.data();
+      const pointsChange = Number(taskData.lvl) || 0;
+
+      await updateDoc(taskRef, {
+        completed: !currentStatus,
+        user: newUser,
+      });
+
+      setTodos(
+        todos.map((todo) =>
+          todo.id === taskId
+            ? { ...todo, completed: !currentStatus, user: newUser }
+            : todo
+        )
+      );
+
+      const pointsRef = doc(db, "points", userId);
+      const pointsDoc = await getDoc(pointsRef);
+
+      if (pointsDoc.exists()) {
+        const currentPoints = Number(pointsDoc.data().points) || 0;
+        const newPoints = currentStatus
+          ? currentPoints - pointsChange
+          : currentPoints + pointsChange;
+        await updateDoc(pointsRef, { points: newPoints });
+      } else {
+        await setDoc(pointsRef, { points: pointsChange });
+      }
+
+      if (!todos.some((todo) => !todo.completed)) {
+        startCountdownToNextDay();
+      }
+    } catch (error) {
+      console.log("Error updating document", error);
     }
   };
 
@@ -159,18 +205,16 @@ const ComponentA = ({ userId, accentColor, addTask }) => {
                 closeModal={() => setSelectedTaskId(null)}
               />
             )}
-            <p className="text-md  font-semibold">Assigned to: {todo.user}</p>
-            <p className=" text-xs font-semibold">
-              Reward: {todo.lvl} {todo.lvl == 1 ? "point" : "points"}
+            <p className="text-md font-semibold">Assigned to: {todo.user}</p>
+            <p className="text-xs font-semibold">
+              Reward: {todo.lvl} {todo.lvl === 1 ? "point" : "points"}
             </p>
           </div>
         </div>
         <div>
           {!todo.completed && (
             <button
-              onClick={() => {
-                setSelectedTaskId(todo.id);
-              }}
+              onClick={() => setSelectedTaskId(todo.id)}
               className="bg-slate-900 rounded-full w-6 h-6 hover:bg-slate-600"
             >
               <FontAwesomeIcon icon={faQuestion} />
@@ -180,75 +224,58 @@ const ComponentA = ({ userId, accentColor, addTask }) => {
       </div>
     ));
 
-  const toggleCompleted = async (taskId, currentStatus) => {
-    const taskRef = doc(db, "todos", taskId);
-
-    const newUser = currentStatus ? "anyone" : userId;
-
-    try {
-      // Fetch the task details to get the 'lvl' value
-      const taskDoc = await getDoc(taskRef);
-      if (!taskDoc.exists()) {
-        console.log("Task not found");
-        return;
-      }
-      const taskData = taskDoc.data();
-      const pointsChange = Number(taskData.lvl) || 0; // Ensure 'lvl' is treated as a number
-
-      // Update the task's completion status
-      await updateDoc(taskRef, {
-        completed: !currentStatus,
-        user: newUser,
-      });
-
-      // Update the local state for the tasks
-      setTodos(
-        todos.map((todo) =>
-          todo.id === taskId
-            ? { ...todo, completed: !currentStatus, user: newUser }
-            : todo
-        )
-      );
-
-      // Now update the points
-      const pointsRef = doc(db, "points", userId); // Assuming the document ID is the userId
-      const pointsDoc = await getDoc(pointsRef);
-
-      if (pointsDoc.exists()) {
-        // Calculate new points value
-
-        const currentPoints = Number(pointsDoc.data().points) || 0; // Ensure it's a number
-        const newPoints = currentStatus
-          ? currentPoints - pointsChange
-          : currentPoints + pointsChange;
-
-        await updateDoc(pointsRef, { points: newPoints });
-      } else {
-        // Create a new document for the user with the points if it doesn't exist
-        await setDoc(pointsRef, { points: pointsChange });
-      }
-    } catch (error) {
-      console.log("Error updating document", error);
+  const colorRender = (userId) => {
+    switch (userId) {
+      case "adam":
+        return "bg-orange-800 text-white";
+      case "leon":
+        return "bg-purple-800 text-white";
+      case "admin":
+        return "bg-green-800 text-white";
+      default:
+        return "bg-slate-600 text-white";
     }
   };
 
+  const notCompletedTasksCount = todos.filter((todo) => !todo.completed).length;
+
   return (
-    <div className="p-8 bg-gray-800 min-h-screen text-white">
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4 mt-10 justify-center text-center">
-          Not Completed Tasks {refillTasks()}
-        </h2>
-        <div className="flex flex-col gap-4">
-          {renderTasks(notCompletedTasks)}
+    <div className="p-8 bg-gray-800 min-h-screen text-white flex flex-col items-center">
+      {currentUser === "admin" && countdown && (
+        <button
+          onClick={addTasksForTheDay}
+          className="bg-red-500 text-white py-2 px-4 rounded mb-4 hover:bg-red-600"
+        >
+          Skip Timer
+        </button>
+      )}
+      {countdown ? (
+        <div className="flex flex-col items-center justify-center text-center mt-32 text-3xl">
+          <h2>Next tasks available in:</h2>
+          <p>{countdown}</p>
         </div>
-      </section>
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4 justify-center text-center">
-          Completed Tasks
-        </h2>
-        <div className="flex flex-col gap-4">{renderTasks(completedTasks)}</div>
-      </section>
+      ) : (
+        <>
+          <section className="mb-8 w-full max-w-xl">
+            <h2 className="text-2xl font-bold mb-4 mt-10 text-center">
+              Not Completed Tasks ({notCompletedTasksCount})
+            </h2>
+            <div className="flex flex-col gap-4">
+              {renderTasks(todos.filter((todo) => !todo.completed))}
+            </div>
+          </section>
+          <section className="mb-8 w-full max-w-xl">
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              Completed Tasks
+            </h2>
+            <div className="flex flex-col gap-4">
+              {renderTasks(todos.filter((todo) => todo.completed))}
+            </div>
+          </section>
+        </>
+      )}
     </div>
   );
 };
+
 export default ComponentA;

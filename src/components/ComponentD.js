@@ -8,7 +8,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase"; // Adjust the path as necessary
 
-function ComponentD({ userId }) {
+function ComponentD({ addDefaultTasks, addFreeTasks, addFridayTasks }) {
   const [title, setTitle] = useState("");
   const [level, setLevel] = useState("");
   const [assignedUser, setAssignedUser] = useState("");
@@ -81,36 +81,6 @@ function ComponentD({ userId }) {
     } catch (error) {
       console.error("Error adding document: ", error);
     }
-  };
-
-  const addDefaultTasks = async (e) => {
-    if (isEvenDay) {
-      console.log("day num is even");
-      addTask("Posprzątanie kuwety", 2, "adam");
-      addTask("Posprzątanie kuchni", 2, "leon");
-    } else {
-      console.log("day num is not even");
-      addTask("Posprzątanie kuchni", 2, "adam");
-      addTask("Posprzątanie kuwety", 2, "leon");
-    }
-
-    addTask("Pościelenie łóżka", 1, "adam");
-    addTask("Ogarnięcie Pokoju", 1, "adam");
-    addTask("Pościelenie łóżka", 1, "leon");
-    addTask("Ogarnięcie Pokoju", 1, "leon");
-  };
-  const addFreeTasks = async (e) => {
-    addTask("Posprzątanie małej łazienki", 2, "anyone");
-    addTask("Wyniesienie śmieci", 1, "anyone");
-    addTask("Odkurzanie w dużym pokoju", 1, "anyone");
-    addTask("Odkurzanie w przedpokoju", 1, "anyone");
-  };
-  const addFridayTasks = async (e) => {
-    addTask("Posprzątanie pokoju", 3, "adam");
-    addTask("Posprzątanie pokoju", 3, "leon");
-    addTask("Posprżatanie dużej łazienki", 3, "anyone");
-    addTask("Wyniesienie śmieci", 1, "anyone");
-    addTask("Umycie podłóg", 2, "anyone");
   };
 
   return (

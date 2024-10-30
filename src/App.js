@@ -54,6 +54,38 @@ const App = () => {
     setTotalPoints(newPoints);
   };
 
+  const addDefaultTasks = async () => {
+    const today = new Date().getDate();
+    const isEvenDay = today % 2 === 0;
+
+    if (isEvenDay) {
+      await addTask("Posprzątanie kuwety", 2, "adam");
+      await addTask("Posprzątanie kuchni", 2, "leon");
+    } else {
+      await addTask("Posprzątanie kuchni", 2, "adam");
+      await addTask("Posprzątanie kuwety", 2, "leon");
+    }
+    await addTask("Pościelenie łóżka", 1, "adam");
+    await addTask("Ogarnięcie Pokoju", 1, "adam");
+    await addTask("Pościelenie łóżka", 1, "leon");
+    await addTask("Ogarnięcie Pokoju", 1, "leon");
+  };
+
+  const addFreeTasks = async () => {
+    await addTask("Posprzątanie małej łazienki", 2, "anyone");
+    await addTask("Wyniesienie śmieci", 1, "anyone");
+    await addTask("Odkurzanie w dużym pokoju", 1, "anyone");
+    await addTask("Odkurzanie w przedpokoju", 1, "anyone");
+  };
+
+  const addFridayTasks = async () => {
+    await addTask("Posprzątanie pokoju", 3, "adam");
+    await addTask("Posprzątanie pokoju", 3, "leon");
+    await addTask("Posprzątanie dużej łazienki", 3, "anyone");
+    await addTask("Wyniesienie śmieci", 1, "anyone");
+    await addTask("Umycie podłóg", 2, "anyone");
+  };
+
   // Inside App.js
 
   const addTask = async (title, lvl, user) => {
@@ -120,7 +152,14 @@ const App = () => {
     switch (activeComponent) {
       case "A":
         return (
-          <CompA userId={userId} accentColor={accentColor} addTask={addTask} />
+          <CompA
+            userId={userId}
+            accentColor={accentColor}
+            addTask={addTask}
+            addDefaultTasks={addDefaultTasks}
+            addFreeTasks={addFreeTasks}
+            addFridayTasks={addFridayTasks}
+          />
         );
       case "B":
         return (
@@ -135,7 +174,15 @@ const App = () => {
       case "C":
         return <CompC accentColor={accentColor} userId={userId} />;
       case "D":
-        return <CompD accentColor={accentColor} userId={userId} />;
+        return (
+          <CompD
+            accentColor={accentColor}
+            userId={userId}
+            addDefaultTasks={addFridayTasks}
+            addFreeTasks={addFreeTasks}
+            addFridayTasks={addFridayTasks}
+          />
+        );
       case "E":
         return (
           <CompE
